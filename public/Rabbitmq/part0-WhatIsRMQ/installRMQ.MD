@@ -130,3 +130,7 @@
 ### -p 5672	App connection
 ### -p 15672	Web UI
 ### rabbitmq:4-management	Image + UI
+
+# -d: Runs the container detached—in the background.
+## Your terminal returns immediately
+### container keeps running independently.
