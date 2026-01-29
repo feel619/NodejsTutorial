@@ -16,13 +16,19 @@
                 │  ride_exchange   │
                 └───────┬──────────┘
                         |
-        ┌───────────────┼───────────────┐
-        |               |               |
+        ┌───────────────┼─────────────────────┐
+        |               |                     |
  bindingKey=ride.auto bindingKey=ride.cab bindingKey=ride.bike
-        |               |               |
-     Auto Queue       Cab Queue        Bike Queue
-        |               |
-   Auto Drivers     Cab Drivers
+        |               |                     |
+     Auto Queue       Cab Queue           Bike Queue
+        |               |                     |
+   Auto Drivers       Cab Drivers         Bike Drivers
+
+   Asssume kijye ek ride service mulitple user ride book kare hai x user bike book kar rha hai y user cab book kar rha hai
+   aapko aesi system banani hai k jo bike ki request aaye wo bike ke driver hai uske pass jaye
+   cab ki request cav drivers ke pas and auto ki auto driver ke pass
+   so user jese hi ride book karge ham uski ride type ke hisab se request ko ride_exchange me route kargene routing key ke trough
+   cab driver cab queue ke sathe bind hai with bindingkey ride.cab or auto auto dirver auto quque ke sath bind hai with bindingKey=ride.auto
 
 
 🏭 Real Life Example (Courier Office)
@@ -74,6 +80,23 @@ const publishRideRequest = async function () {
     //Direct Exchange
     //Exact match routing key
     //Example: order.created
+
+    //Producer me hamne queue nahi create kiya hai aur karna bhi nahi chiahiye
+    //mene pichli dono video me isliye producer me queue create tha kyoki ham easily understand kar sake
+    // aur Technically RabbitMQ allowed karta hai  RabbitMQ mana nahi karta.
+    //but Architecturally bad practice
+    //kyoki agr app producer me queue creat karenge to tight coupling hogi
+    // jisme Producer + Consumer strongly tied ho jaate hain Consumer change → Producer change
+    //Scaling Problem aayegi jisme agar kal  New service add hui to → Producer modify
+    //Deployment problem aaygi producer me aapne durable false rakha hai aur consumer me durable true then Rabbitmq error aayegi PRECONDITION_FAILED
+
+    //terminal open karke test karte hai
+    //pehle hame consumer start karna hai
+    //kyoki first consumer start hoga to queue create hogi, wo quque exhange ke stah bind hogi,
+    // Producer jo  message send karega wo message quque me store kargi aur consumer message recive karega
+    //agar hum producer pehle start karenge to message lost hoga kyo
+    //kyoki Producer pehel start hoga to  Exchange creat hoga, exchange me  message publish karga,
+    //lekin exhnage ke sath queue bind nahi rahegi to message droped hoga kyoki message quque me save hota hai
 
     // ❓ Producer me queue create karna – galat ya sahi?
     // ✅ Technically allowed
