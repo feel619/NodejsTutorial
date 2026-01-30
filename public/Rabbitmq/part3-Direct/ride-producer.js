@@ -24,11 +24,12 @@
         |               |                     |
    Auto Drivers       Cab Drivers         Bike Drivers
 
-   Asssume kijye ek ride service mulitple user ride book kare hai x user bike book kar rha hai y user cab book kar rha hai
-   aapko aesi system banani hai k jo bike ki request aaye wo bike ke driver hai uske pass jaye
-   cab ki request cav drivers ke pas and auto ki auto driver ke pass
-   so user jese hi ride book karge ham uski ride type ke hisab se request ko ride_exchange me route kargene routing key ke trough
+   Asssume kijye ek ride service mulitple user ride booking kare hai some user cab book kar rhe hai koi users auto book kar rhe hai
+   ham aesi system bana rahe hai jo cab ki request aaye wo cab driver hai uske pass jaye aur agr user auto book ki auto driver ke pass
+   user jese hi ride book karge ham uski routing key ke trough route kargene ride_exchange me
    cab driver cab queue ke sathe bind hai with bindingkey ride.cab or auto auto dirver auto quque ke sath bind hai with bindingKey=ride.auto
+   aur direct exhange me routingkey exect math honi chaiye so ride.auto ki request aayi to wo auto driver ke pass jayegi
+   or ride.cab routing hogi to wo cab driver ke pass jayegi 
 
 
 🏭 Real Life Example (Courier Office)
