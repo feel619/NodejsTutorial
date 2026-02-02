@@ -41,7 +41,10 @@ agar app routing key defined karte ho ride*delhi ride#cab *delhi* ye sub invalid
 Topic exchange kab use hota hai
 jab aapko category-wise ya region-wise filtering chahiye.
 
+aur 2 consumer cretae kiye hai jisme dono consumer ki queqe ko Binding Pattern ki help se bind kiya hai
+delhi consumser ko binding kiya hai * or  anaylytics consumer ko bind kiya hai # se
 
+chaliye code samjte hai 
 
 
 aur Direct exchange se TOPic exhange powerfull hota hai kyoki isme hum whild card use kar skate hai
