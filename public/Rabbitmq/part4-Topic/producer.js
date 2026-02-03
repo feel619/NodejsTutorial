@@ -44,8 +44,27 @@ jab aapko category-wise ya region-wise filtering chahiye.
 aur 2 consumer cretae kiye hai jisme dono consumer ki queqe ko Binding Pattern ki help se bind kiya hai
 delhi consumser ko binding kiya hai * or  anaylytics consumer ko bind kiya hai # se
 
-chaliye code samjte hai 
+chaliye code samjte hai
 
+to code complate ho chuka hai ab run karke test karte hai
+so subse phele hame dono consumer start karne hai delhiconsumer and consumer anayliytic
+jese hi consumer start honge quque creat hogi aur wo quque bind ho jayegi exhange ke sath with routing pattrn
+and then hame producer start karna hai, jo message publish karega exchnage me using routing key ride.delhi.cab and ride.mumbai.bike
+so jese hi message publish hota hai hamara jo first consumer hai wo  sirf delhi wala msg received karta hai kyo?
+kyoki hamen delhi consumer me pattern rakha hai ki STAR bhai ride.delhi.* matlb first and seoncd word fixed baki 3rd anything one word
+mutalb ham bike auto cab kuch bhi lagaye third word, to wo delhi consumer reciec kar lega
+lekin seond message nahi recieve huva kyoku ride.match huva lekin second word mumbai hai jo delhi ke sath meatch nahi huva
+aur hamanra anayliytic consumer hai wo dono message recievd karega kyoki hamen # wild card use kiya hai aur # bolata hai ki ride ke bad anthing so ride.delhi bhi ok hai ride.mumbai ok hai
+
+I think ab aapko Topic Exchange samajh aa gaya hoga.
+Agar kahin bhi thoda sa confusion lage,
+toh comment karke zaroor poochhiye
+
+Video ko like kijiye,
+aur channel ko subscribe karna mat bhoolna.
+
+Maine quiz bhi create ki hai,
+toh practical ke saath test karke answer kariye 🚀”
 
 aur Direct exchange se TOPic exhange powerfull hota hai kyoki isme hum whild card use kar skate hai
 ⭐ WILDCARD RULES (VERY IMPORTANT)
