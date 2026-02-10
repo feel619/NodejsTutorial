@@ -60,10 +60,29 @@ Pehli request → data DB se aaya Same data Redis me store ho gaya Next user req
 Result: Page fast load DB load kam User happy 😄
 
 Common use cases:
-Caching (API response, DB query result)
+Caching
+Same data bar-bar fetch hota hai to ham waha redis use kar sakte hai
+
 Session management
-Rate limiting
-Leaderboards
-Real-time chat / counters
+Millions of users logged in kar rahe he to
+Session data DB me store → slow,
+Session data Redis me store kar ke
+
+OTP & Token Storage
+OTP temporary hota hai, so Expiry logic set kar sakte hai
+
+Rate Limiting
+Too many requests → server crash,so koi ek user bar bar API call kar rha hai to user ke ip se user ki request count kr ke limit execed set kr sakte hai
+
+
+Leaderboards & Ranking System
+Real-time ranking calculate karna ho
+
+Real-time chat / counter
+jese Online/offline status or message Unread count real-time
+Like / view count fast update chahiye
+
+Message Queue / Task Queue
+Background tasks manage karna, Email, Notification, SMS delay
 
 aesa manlo Redis microseconds me response deta hai, jabki DB milliseconds leta hai.
