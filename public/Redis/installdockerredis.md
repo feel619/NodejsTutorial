@@ -67,6 +67,14 @@ port 6379
 protected-mode no
 appendonly yes
 ```
+- bind 0.0.0.0 Redis sabhi network interfaces se aane wali requests accept karega
+- port 6379  Redis 6379 number ke port pe listen karega
+- protected-mode no matlb Redis external connections allow karega
+- appendonly yes
+- means redis har write operation disk me likhega, becasuse Redis me Data RAM me hota hai, to agr Redis restart then data lost,
+- mtlb Agar server restart ho gaya, Docker container crash ho gaya, ya machine reboot ho gayi
+- to data lost na ho isliye appendonly yes
+
 
 **🚀 aur fir create karni hai Dockerfile, ```nano Dockerfile ``` dockerfile me ye content add kar raha.:**
 ```markdown
