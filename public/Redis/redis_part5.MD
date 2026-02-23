@@ -129,3 +129,56 @@ result C D E
 
 LRANGE	Command Data return karta hai
 LTRIM	Command List ko permanently modify karta hai
+
+```markdown
+const { client, connectRedis } = require('./redis')
+
+async function run() {
+    await connectRedis();
+
+
+    await client.lPush("leftpushList", ["X", "Y", "Z"]);
+    const lpData = await client.lRange("leftpushList", 0, -1);
+    console.log("LPUSH Result:", lpData);
+
+    const leftPop = await client.lPop("leftpushList");
+    console.log("LPOP removed:", leftPop);
+    const leftPopData = await client.lRange("leftpushList", 0, -1);
+    console.log("leftPopData Result:", leftPopData);
+
+
+    await client.rPush("rightpushlist", ["A", "B", "C", "D"]);
+    const rightPop = await client.rPop("rightpushlist");
+    console.log("RPOP removed:", rightPop);
+    const remaining = await client.lRange("rightpushlist", 0, -1);
+    console.log("Remaining List:", remaining);
+
+    // Get length
+    const length = await client.lLen("students");
+    console.log("Total Students:", length);
+
+    await client.rPush("pending", ["job1", "job2", "job3"]);
+    const movedJob = await client.lMove(
+        "pending",
+        "processing",
+        "LEFT",
+        "RIGHT"
+    );
+    console.log("Moved Job:", movedJob);
+
+    const pendingList = await client.lRange("pending", 0, -1);
+    const processingList = await client.lRange("processing", 0, -1);
+    console.log("Pending:", pendingList);
+    console.log("Processing:", processingList);
+
+    await client.rPush("numbers", ["1", "2", "3", "4", "5"]);
+    await client.lTrim("numbers", 0, 2);
+    const result = await client.lRange("numbers", 0, -1);
+    console.log("After LTRIM:", result);
+
+    await client.quit();
+}
+
+run();
+
+```
