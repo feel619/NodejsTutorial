@@ -77,36 +77,42 @@ key name
 LMOVE Kya Hai? 👉 Ek list se element remove karta hai 👉 Aur usko dusri list me insert karta hai
 Syntax hai LMOVE source fir destination and LEFT|RIGHT LEFT|RIGHT
 Example Samjho ke sath samjete hai Agar humare paas hai:
-pending → [ job1, job2, job3 ]
-processing → [ ]
-LMOVE pending processing LEFT RIGHT
+leftpush me element hai → [ C, B, A ]
+rightpush me element hai → [ 0, 1, 2 ]
+LMOVE leftpush rightpush LEFT LEFT
 Kya hoga?
-1️⃣ pending list ke LEFT (head) se element niklega
-2️⃣ processing list ke RIGHT (tail) me add hoga
+1️⃣ leftpush list mese head  mtlb LEFT se element niklega aur
+2️⃣ rightpush list me HEAD mtlb LEFT se add hoga agr ME Last RIGHT lagata to end se matlb tail se elemet add hota
 so result dekho
-pending → [ job2, job3 ]
-processing → [ job1 ]
+leftpush → [ B, A ]
+rightpush → [ C,0,1,2 ]
+LMOVE leftpush rightpush RIGHT RIGHT
+leftpush → [ B ] so ab leftpush mese A elemet lega kyoki hamne RIGHT lagaya aur righpush me right end se elemert add karga
+rightpush → [ C,0,1,2,A ]
 
-LRANGE ka matlab hai:
-👉 List ke andar se specific range ke elements nikalna Matlab: Aap full list bhi nikal sakte ho Ya sirf kuch specific indexes
+aap khud left to right and right to left test karo aur comment karo aapka result kya aaya?
+
+
+LRANGE ka kam hai:
+👉 List ke andar se specific range ke elements nikalna
+Matlab: Aap full list bhi nikal sakte ho
+ Ya kuch specific indexes bhi nikl sakte ho
 
 jiski Syntax hai
 LRANGE
 key → list ka naam
 start → starting index
 stop → ending index
-
 ⚠ Index zero-based hota hai.
 
-jese hame mylist mese LRANGE mylist 0 2
-full list nikal skate ho LRANGE mylist 0 -1
-
-Index	Meaning
--1	Last element agr  -2	Second last ,
+exmpale dekhe to  hamere pas list hai mylist jisme elemet hai a b c d e f g h
+jese ham spacifix index nikal skate hai LRANGE mylist 0 2
+aur agr full list get karni hai to LRANGE mylist 0 -1 ,
+jisme -1	means Last element,  -2	Second last and so on..
 
 
 LTRIM ka matlab hai: 👉 List ko specified range tak limit kar dena
-👉 Baaki elements automatically remove ho jaate hain
+mtlb hame agar specific range tak elemetnt rkahana hai aur  👉 Baaki elements remove karna hai tub ham LTRIM use kar sakte hai
 agr simple world me bole to List ko cut karke sirf required portion rakhna.
 
 syntac hai
@@ -130,6 +136,39 @@ result C D E
 LRANGE	Command Data return karta hai
 LTRIM	Command List ko permanently modify karta hai
 
+# Blocking commands
+
+BLPOP
+BLPOP ka full form hai: Blocking Left Pop
+BLPOP list ke left (head) se element remove karta hai 👉 Lekin agar list empty hai… 👉 To immediately error nahi deta 👉 Balki WAIT karta hai 🔥
+Isliye isko “blocking command” bolte hain.
+
+BLPOP
+key → list ka naam mulitple key bhi use kar sakte ho
+timeout → kitne seconds wait kare
+
+LPOP Agar list empty hai to lpop instant null return karega
+LPOP ke opposite BLPOP agr list empty hai to aap jitna timeout rakhoge utne time tak wait krega
+jese hi list me element aayega immediately elemet return krega
+let's test
+
+blpop jobs 10 -> 10 mtlb 10 second wait karga, agr elemet mila to instat return krga and agr 10 second tak nahi elemnt nahi mila to nil retunr hoga
+blpop jobs 0 0 means infinity wait
+ek list create krte hai rpush jobs a
+
+BLMOVE ka matlab hai: Blocking List Move
+BLMOVE ka kaam hai:
+1️⃣ Source list se element remove karta hai
+2️⃣ Destination list me insert karta hai
+3️⃣ Agar source empty hai to WAIT karta hai
+
+JO hamene LMOVE dekha same as simmiler hai bas timeout add kiya hai mtbl blocking and waiting support karta hai
+LMOVE immediately return karega agar list empty hai. uske oppsite BLMOVE wait karega.
+
+Sytax hai blmove source list name destination list name LEFT | RIGHT LEFT OR RIGHt and last me timeout
+
+
+
 ```markdown
 const { client, connectRedis } = require('./redis')
 
@@ -137,27 +176,44 @@ async function run() {
     await connectRedis();
 
 
-    await client.lPush("leftpushList", ["X", "Y", "Z"]);
-    const lpData = await client.lRange("leftpushList", 0, -1);
-    console.log("LPUSH Result:", lpData);
-
-    const leftPop = await client.lPop("leftpushList");
-    console.log("LPOP removed:", leftPop);
-    const leftPopData = await client.lRange("leftpushList", 0, -1);
-    console.log("leftPopData Result:", leftPopData);
 
 
-    await client.rPush("rightpushlist", ["A", "B", "C", "D"]);
-    const rightPop = await client.rPop("rightpushlist");
-    console.log("RPOP removed:", rightPop);
-    const remaining = await client.lRange("rightpushlist", 0, -1);
-    console.log("Remaining List:", remaining);
+    const leftPop = await client.lPop("leftpushList");//leftpush list mese lpop ka use krke left side se elemet remove krte hai
+    console.log("LPOP removed:", leftPop);//log kiya left pop jisme output print hoga jo elemetnt remove hoga uska
+    const remaining = await client.lRange("leftpushList", 0, -1);//same lrane karke firse list mese elemet check krt hai
+    console.log("remaining Result:", remaining);//varibale name change
 
-    // Get length
-    const length = await client.lLen("students");
-    console.log("Total Students:", length);
+    await client.lPush("rightpushlist", "A");//single elemenet push kiya
+    await client.lPush("rightpushlist", ["B", "C"]);//agr array me krna hai to
+    const rightData = await client.lRange("rightpushlist", 0, -1);//lrange se elemet nikalte hai 0 -1 mean infinity
+    console.log(" result ", rightData);
+    const leftpop = await client.lPop("rightpushlist");//leftpush list mese lpop ka use krke left side se elemet remove krte hai
+    console.log(" leftpop ", leftpop);;//log kiya left pop jisme output print hoga jo elemetnt remove hoga uska
+    const leftpopcount = await client.lPopCount("rightpushlist", 2);
+    console.log(" leftpopcount ", leftpopcount);;//log kiya left pop jisme output print hoga jo elemetnt remove hoga uska
+    const remain = await client.lRange("rightpushlist", 0, -1);
+    console.log(" remain ", remain);
 
-    await client.rPush("pending", ["job1", "job2", "job3"]);
+
+    await client.rPush("rightpushlist", "A");
+    await client.rPush("rightpushlist", ["B", "C"]);
+    const rightData = await client.lRange("rightpushlist", 0, -1);
+    console.log(" result ", rightData);
+    const rightpop = await client.rPop("rightpushlist");
+    console.log(" rightpop ", rightpop);
+    const rightpopcount = await client.rPopCount("rightpushlist", 2);
+    console.log(" rightpopcount ", rightpopcount);
+    const remain = await client.lRange("rightpushlist", 0, -1);
+    console.log(" remain ", remain);
+
+    //lLen se list ki length count get kar sakte ho
+    const length = await client.lLen("rightpushlist");
+    console.log("Total count:", length);
+
+    move krenge lmove se souce list se destinatnio list me
+    to first create pending list
+    await client.rPush("pending", ["job1", "job2", "job3","job4","job5"]);
+    fir move krna hai elemet pending to processing
     const movedJob = await client.lMove(
         "pending",
         "processing",
@@ -165,16 +221,36 @@ async function run() {
         "RIGHT"
     );
     console.log("Moved Job:", movedJob);
-
+    aur fir ham pending list and proclist ka output print krange
     const pendingList = await client.lRange("pending", 0, -1);
     const processingList = await client.lRange("processing", 0, -1);
     console.log("Pending:", pendingList);
     console.log("Processing:", processingList);
 
-    await client.rPush("numbers", ["1", "2", "3", "4", "5"]);
-    await client.lTrim("numbers", 0, 2);
-    const result = await client.lRange("numbers", 0, -1);
+    await client.lTrim("pending", 0, 2);//0 se 2 index tak elemetn rako baki ke clear kardo
+    const result = await client.lRange("pending", 0, -1);
     console.log("After LTRIM:", result);
+
+    BlPOP - mana lijiye hamara worker hai jo job ka wait kar raha hai
+    console.log("Worker waiting for jobs...");
+    const job = await client.blPop("jobs", 0);
+    console.log("Received job:", job);
+
+    hamari app.js mese jobs me element push krte hai
+    await client.rPush("jobs", "Send Email Task");
+
+
+    console.log("Worker waiting for jobs...");
+  const job = await client.blMove(
+    "pending",
+    "processing",
+    "LEFT",
+    "RIGHT",
+    0
+  );
+  console.log("Moved Job:", job);
+
+  await client.rPush("pending", "Email Task");
 
     await client.quit();
 }
