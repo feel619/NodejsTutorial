@@ -175,14 +175,6 @@ const { client, connectRedis } = require('./redis')
 async function run() {
     await connectRedis();
 
-
-
-
-    const leftPop = await client.lPop("leftpushList");//leftpush list mese lpop ka use krke left side se elemet remove krte hai
-    console.log("LPOP removed:", leftPop);//log kiya left pop jisme output print hoga jo elemetnt remove hoga uska
-    const remaining = await client.lRange("leftpushList", 0, -1);//same lrane karke firse list mese elemet check krt hai
-    console.log("remaining Result:", remaining);//varibale name change
-
     await client.lPush("rightpushlist", "A");//single elemenet push kiya
     await client.lPush("rightpushlist", ["B", "C"]);//agr array me krna hai to
     const rightData = await client.lRange("rightpushlist", 0, -1);//lrange se elemet nikalte hai 0 -1 mean infinity
@@ -191,8 +183,8 @@ async function run() {
     console.log(" leftpop ", leftpop);;//log kiya left pop jisme output print hoga jo elemetnt remove hoga uska
     const leftpopcount = await client.lPopCount("rightpushlist", 2);
     console.log(" leftpopcount ", leftpopcount);;//log kiya left pop jisme output print hoga jo elemetnt remove hoga uska
-    const remain = await client.lRange("rightpushlist", 0, -1);
-    console.log(" remain ", remain);
+    const remain = await client.lRange("rightpushlist", 0, -1);//same lrane karke firse list mese elemet check krt hai
+    console.log(" remain ", remain);//varibale name change
 
 
     await client.rPush("rightpushlist", "A");
